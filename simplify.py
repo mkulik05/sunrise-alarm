@@ -15,12 +15,13 @@ content = content.replace(jsIncludings, "<script>{}</script>".format(jsCode))
 cssStylesheet = open(css).read()
 content = content.replace(cssIncludings, "<style>{}</style>".format(cssStylesheet.replace(" ", "")))
 
+content = content.replace("\n", "\\n")
+
 res = open("main.cpp")
 script = res.read()
 res.close()
 res = open("main.cpp", 'w')
-print(script[(script.index("// START")+8):(script.index("// END"))])
-script = script.replace(script[(script.index("// START")+8):(script.index("// END"))], '\nstring htmlData = "{}"\n'.format(content.replace('"', "'")), 1)
+script = script.replace(script[(script.index("// START")+8):(script.index("// END"))], '\nString htmlData = "{}";\n'.format(content.replace('"', "'")), 1)
 res.write(script)
 
 res.close()
