@@ -13,7 +13,7 @@ jsCode = open(js).read()
 content = content.replace(jsIncludings, "<script>{}</script>".format(jsCode))
 
 cssStylesheet = open(css).read()
-content = content.replace(cssIncludings, "<style>{}</style>".format(cssStylesheet.replace(" ", "")))
+content = content.replace(cssIncludings, "<style>{}</style>".format(cssStylesheet.replace("  ", " ")))
 
 content = content.replace("\n", "\\n")
 

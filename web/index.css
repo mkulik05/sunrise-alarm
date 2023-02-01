@@ -1,0 +1,252 @@
+#alarms-list {
+  flex-direction: column;
+}
+
+.alarm-block {
+  width: 500px;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;    
+  align-items: center;
+}
+
+.alarm-time {
+  font-size: 40px;
+  font-family: "Gill Sans", sans-serif;
+  width: 30%;
+}
+
+
+
+.time-name-days {
+  width: 85%;
+}
+
+.days {
+  color: grey; 
+      
+}
+
+#alarmAdder input[type="time"] {
+  font-family: "Gill Sans", sans-serif;
+  font-size: 20px;
+  height: 40px;
+  width: 70%;
+  border: 0px;
+  border-bottom: 1px solid rgb(143, 142, 142);
+}
+
+#alarmAdder input[type="time"]:focus {
+  outline: none;
+  border-bottom: 1px solid rgb(122, 111, 249);;
+}
+
+#alarmAdder {
+  box-shadow: 5px 4px 2px rgb(178, 177, 177);
+  border: 1px solid black;
+  width: 500px;
+  height: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display:none;
+  background-color: white;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+#adderBtns {
+  justify-content: space-around;
+  width: 100%
+}
+#alarm-day-select {
+  display: flex;
+  justify-content: space-between;
+  width: 70%
+}
+#alarm-day-select label {
+  color: rgb(133, 133, 133);
+  font-family: "Gill Sans", sans-serif;
+}
+#alarm-day-select input {
+  display: none;
+}
+#alarm-day-select input[type=checkbox]:checked + label {
+  color: rgb(52, 75, 255);
+}
+#nameInput {
+  width: 70%;
+}
+
+button {
+  background-color: white;
+  border: 0px;
+}
+
+button:hover {
+  color: rgb(99, 96, 246);
+  border: 0px;
+}
+
+#create-alarm {
+  width: 50px;
+  height: 50px;
+  border: 1px solid rgb(118, 113, 255);
+  border-radius: 50%;
+  font-size: 20px;
+  color: rgb(118, 113, 255);
+  position: fixed;
+  bottom: 8%
+}
+
+#create-alarm:hover {
+background-color: rgb(228, 228, 255);
+}
+
+#nameInput input {
+  width: 100%;
+  font-family: "Gill Sans", sans-serif;
+  border: 0px;
+  border-bottom: 1px solid black
+}
+
+#adderBtns button {
+  font-family: "Gill Sans", sans-serif;
+  font-size: 15px;
+}
+
+#nameInput input:focus  {
+  outline: none;
+  font-family: "Gill Sans", sans-serif;
+  border-bottom: 1px solid rgb(8, 0, 245)
+}
+input[type="text"] {
+  font-size: 24px;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+.toggle-input {
+  display: none;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  border-radius: 50%;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+  
+.toggle-input:checked + .toggle-slider {
+  background-color: #2196F3;
+}
+
+.toggle-input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+@media (max-width: 1000px) {
+  .alarm-block {
+    width: 90%;
+    height: 120px;
+  }
+  #alarmAdder {
+    height: 500px;
+    width:  90%;
+  }
+  #create-alarm {
+    font-size: 30px;
+    height: 65px;
+    width: 65px;
+  }
+  .alarm-time {
+    font-size: 40px;
+  }
+  #alarmAdder input[type="time"] {
+    font-size: 20px;
+    height: 30px;
+    width: 85%;
+  }
+  #adderBtns button {
+    font-size: 20px;
+  }
+  input[type="text"] {
+    font-size: 25px;
+  }
+
+  #alarm-day-select {
+    width: 85%;
+  }
+
+  #alarm-day-select label {
+    font-size: 20px;  
+  }
+
+  .days {
+    font-size: 17px;
+  }
+  .toggle-switch {
+    width: 55px;
+    height: 28px;
+  }  
+
+  #nameInput {
+    width: 85%
+  }
+
+  #alarm-name {
+    width: 85%;
+    font-size: 25px;
+  }
+  
+  .toggle-slider {
+    transition: .4s;
+    border-radius: 28px;
+  }
+  
+  .toggle-slider:before {
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    transition: .4s;
+  }
+    
+  .toggle-input:checked + .toggle-slider {
+    background-color: #2196F3;
+  }
+  
+  .toggle-input:checked + .toggle-slider:before {
+    transform: translateX(28px);
+  }
+}
+

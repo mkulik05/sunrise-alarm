@@ -1,34 +1,41 @@
 <!DOCTYPE html>
+<meta name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <html lang="en">
   <head>
     <link rel="stylesheet" href="index.css">
   </head>
 
   <body>
-    <div id="alarms-list">
+    <div id="alarms-list" class="wrapper">
 
     </div>
-    <div id="create-alarm">
-      Add alarm
+    <div class="wrapper">
+      <button id="create-alarm">
+        +
+      </button>
     </div>
-    <div id="alarmAdder" hidden>
-      <input type="time" id="select-time" required>
-      <div>
-        <input type="checkbox" id="day0" placeholder="day">
-        <input type="checkbox" id="day1" placeholder="day">
-        <input type="checkbox" id="day2" placeholder="day">
-        <input type="checkbox" id="day3" placeholder="day">
-        <input type="checkbox" id="day4" placeholder="day">
-        <input type="checkbox" id="day5" placeholder="day">
-        <input type="checkbox" id="day6" placeholder="day">
-      </div>
-      <div id="add-alarm">
-        Add alarm
-      </div>
-    </div> 
-    <div id="delete-alarms" hidden>
+    <div class="wrapper">
+      <div id="alarmAdder" class="wrapper" hidden>
+        <div id="nameInput">
+          <input placeholder="Alarm name" type="text" id="alarm_name" name="Name" maxlength="20"><br><br>
+        </div>
+        <input type="time" id="select-time" required>
+        <div class="wrapper" id="alarm-day-select">
+        </div>
+        <div class="wrapper" id="adderBtns">
+          <button id="cancel">
+            Back
+          </button>
+          <button id="add-alarm">
+            Add alarm
+          </button>
+        </div>
+      </div> 
+    </div>
+    <button id="delete-alarms" hidden>
       Delete all alarms
-    </div>    
+    </button>    
   </body>
   <script src="index.js"></script>
 </html>
