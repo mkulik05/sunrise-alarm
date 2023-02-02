@@ -17,18 +17,22 @@
     </div>
     <div class="wrapper">
       <div id="alarmAdder" class="wrapper" hidden>
-        <div id="nameInput">
-          <input placeholder="Alarm name" type="text" id="alarm_name" name="Name" maxlength="20"><br><br>
+        <div id="nameInput" class="card-element">
+          <input placeholder="Alarm name" onClick="this.select();" type="text" id="alarm_name" name="Name" maxlength="20">
         </div>
-        <input type="time" id="select-time" required>
-        <div class="wrapper" id="alarm-day-select">
+        <input type="time" class="card-element" id="select-time" required>
+        <div class="wrapper space-between card-element" id="alarm-delays-select">
+          <input type="number" onClick="this.select();" placeholder="Rise time" min="1" max="240" id="time-rise">
+          <input type="number" onClick="this.select();" placeholder="Stay after rise" min="1" max="240" id="time-work-after">
         </div>
-        <div class="wrapper" id="adderBtns">
+        <div class="wrapper card-element" id="alarm-day-select">
+        </div>
+        <div class="wrapper card-element" id="adderBtns">
           <button id="cancel">
             Back
           </button>
-          <button id="add-alarm">
-            Add alarm
+          <button id="save-alarm">
+            Save alarm
           </button>
         </div>
       </div> 

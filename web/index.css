@@ -8,6 +8,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  user-select: none; 
 }
 
 .wrapper {
@@ -20,31 +21,42 @@
   font-size: 40px;
   font-family: "Gill Sans", sans-serif;
   width: 30%;
+  text-align: left;
 }
-
 
 
 .time-name-days {
   width: 85%;
 }
 
-.days {
-  color: grey; 
-      
+.time-name {
+  display: flex;
+  align-items: center;
 }
 
-#alarmAdder input[type="time"] {
+.days {
+  color: grey; 
+  text-align: left;
+  margin-left: 5px;
+}
+
+input {
   font-family: "Gill Sans", sans-serif;
   font-size: 20px;
   height: 40px;
-  width: 70%;
   border: 0px;
   border-bottom: 1px solid rgb(143, 142, 142);
 }
 
-#alarmAdder input[type="time"]:focus {
+/* input {
   outline: none;
   border-bottom: 1px solid rgb(122, 111, 249);;
+} */
+
+input:focus  {
+  outline: none;
+  font-family: "Gill Sans", sans-serif;
+  border-bottom: 1px solid rgb(8, 0, 245)
 }
 
 #alarmAdder {
@@ -63,6 +75,7 @@
   justify-content: space-around;
 }
 
+
 #adderBtns {
   justify-content: space-around;
   width: 100%
@@ -70,7 +83,7 @@
 #alarm-day-select {
   display: flex;
   justify-content: space-between;
-  width: 70%
+  user-select: none; 
 }
 #alarm-day-select label {
   color: rgb(133, 133, 133);
@@ -82,13 +95,11 @@
 #alarm-day-select input[type=checkbox]:checked + label {
   color: rgb(52, 75, 255);
 }
-#nameInput {
-  width: 70%;
-}
 
 button {
   background-color: white;
   border: 0px;
+  user-select: none; 
 }
 
 button:hover {
@@ -113,9 +124,8 @@ background-color: rgb(228, 228, 255);
 
 #nameInput input {
   width: 100%;
-  font-family: "Gill Sans", sans-serif;
-  border: 0px;
-  border-bottom: 1px solid black
+  font-size: 24px;
+  color: rgb(113, 113, 113)
 }
 
 #adderBtns button {
@@ -123,13 +133,8 @@ background-color: rgb(228, 228, 255);
   font-size: 15px;
 }
 
-#nameInput input:focus  {
-  outline: none;
-  font-family: "Gill Sans", sans-serif;
-  border-bottom: 1px solid rgb(8, 0, 245)
-}
-input[type="text"] {
-  font-size: 24px;
+#alarm-delays-select input {
+  width: 120px;
 }
 
 .toggle-switch {
@@ -174,10 +179,45 @@ input[type="text"] {
   transform: translateX(26px);
 }
 
+.space-between {
+  justify-content: space-between;
+}
+
+.card-element {
+  width: 70%
+}
+
+.delays {
+  display: flex;;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 10px;
+  height: 100%;
+  margin-right: 3px;
+  text-align: right;
+}
+
+.time-name-days {
+  cursor: pointer;
+}
+
+.name {
+  width: 85%;
+  font-size: 20px;
+  text-align: center;
+  color: grey;
+}
+.delays-time {
+  justify-content: left;
+}
+
 @media (max-width: 1000px) {
   .alarm-block {
     width: 90%;
     height: 120px;
+  }
+  .card-element {
+    width: 85%;
   }
   #alarmAdder {
     height: 500px;
@@ -191,10 +231,14 @@ input[type="text"] {
   .alarm-time {
     font-size: 40px;
   }
-  #alarmAdder input[type="time"] {
+
+  .name {
+    font-size: 15px;
+  }
+
+  input {
     font-size: 20px;
     height: 30px;
-    width: 85%;
   }
   #adderBtns button {
     font-size: 20px;
@@ -203,28 +247,16 @@ input[type="text"] {
     font-size: 25px;
   }
 
-  #alarm-day-select {
-    width: 85%;
-  }
-
   #alarm-day-select label {
     font-size: 20px;  
   }
 
-  .days {
-    font-size: 17px;
-  }
   .toggle-switch {
     width: 55px;
     height: 28px;
   }  
 
-  #nameInput {
-    width: 85%
-  }
-
   #alarm-name {
-    width: 85%;
     font-size: 25px;
   }
   

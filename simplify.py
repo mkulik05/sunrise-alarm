@@ -17,10 +17,10 @@ content = content.replace(cssIncludings, "<style>{}</style>".format(cssStyleshee
 
 content = content.replace("\n", "\\n")
 
-res = open("main.cpp")
+res = open("/home/mkulik05/Documents/PlatformIO/Projects/alarm/src/main.cpp")
 script = res.read()
 res.close()
-res = open("main.cpp", 'w')
+res = open("/home/mkulik05/Documents/PlatformIO/Projects/alarm/src/main.cpp", 'w')
 script = script.replace(script[(script.index("// START")+8):(script.index("// END"))], '\nString htmlData = "{}";\n'.format(content.replace('"', "'")), 1)
 res.write(script)
 
