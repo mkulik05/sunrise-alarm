@@ -24,9 +24,14 @@
   text-align: left;
 }
 
+*:focus {
+  outline: 0;
+  outline: none;
+}
 
 .time-name-days {
   width: 85%;
+  -webkit-tap-highlight-color:transparent;
 }
 
 .time-name {

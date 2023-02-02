@@ -1,19 +1,26 @@
 const alarmSize = 26
 
 let getAlarmsList = async () => {
-  let resp = await fetch("/alarms-list/")
-  let data = new Uint8Array(await resp.arrayBuffer())
-  let res = []
-  if (data.length > 0) {
-    let i, j, n
-    n = 1;
-    for (i = 0, j = data.length; i < j; i += alarmSize) {
-        res.push([n, ...data.slice(i, i + alarmSize)]);
-        n++
-    }
+  // let resp = await fetch("/alarms-list/")
+  // let data = new Uint8Array(await resp.arrayBuffer())
+  // let res = []
+  // if (data.length > 0) {
+  //   let i, j, n
+  //   n = 1;
+  //   for (i = 0, j = data.length; i < j; i += alarmSize) {
+  //       res.push([n, ...data.slice(i, i + alarmSize)]);
+  //       n++
+  //   }
 
-  }
-  return res
+  // }
+  // return res
+  return [
+    new Uint8Array([1, 1, 127, 20, 47, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    new Uint8Array([2, 1, 10, 2, 4, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    new Uint8Array([3, 1, 50, 20, 47, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    new Uint8Array([4, 1, 70, 23, 59, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    new Uint8Array([5, 1, 71, 12, 40, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+  ];
 }
 
 let updateAlarmState = (isChecked, id) => {
