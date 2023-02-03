@@ -1,20 +1,52 @@
 const alarmSize = 26
 
 let getAlarmsList = async () => {
-  let resp = await fetch("/alarms-list/")
-  if (!resp.ok) alert("Server is unreachable")
-  let data = new Uint8Array(await resp.arrayBuffer())
+  let resp = await request("/alarms-list/")
   let res = []
-  if (data.length > 0) {
-    let i, j, n
-    n = 1;
-    for (i = 0, j = data.length; i < j; i += alarmSize) {
-        res.push([n, ...data.slice(i, i + alarmSize)]);
-        n++
+  // let resp = await fetch("/alarms-list/")
+  if (resp !== '') {
+    let data = new Uint8Array(await resp.arrayBuffer())
+    if (data.length > 0) {
+      let i, j, n
+      n = 1;
+      for (i = 0, j = data.length; i < j; i += alarmSize) {
+          res.push([n, ...data.slice(i, i + alarmSize)]);
+          n++
+      }
+  
     }
-
   }
   return res
+}
+
+let request = async (url, data=new Uint8Array()) => {
+  let webPwd = localStorage.getItem("password")
+  let pwd = new Uint8Array(webPwd.length)
+
+  for (let i = 0; i < webPwd.length; i++) {
+    pwd[i] = webPwd[i].charCodeAt()
+  }  
+
+  const resData = new Uint8Array(data.length + 8);
+  resData.set(data, 0);
+  resData.set(pwd.slice(0, 8), data.length);
+    
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-binary'
+    },
+    body: resData
+  })
+
+
+  if (resp.status == 403) {
+    passwordPromt.style.display = 'flex'
+    return ""
+  } else {
+    return resp
+  }
 }
 
 let updateAlarmState = (isChecked, id) => {
@@ -29,13 +61,14 @@ let changeToogleStateServer = async (id) => {
   const data = new Uint8Array(2);
   data[0] = id
   data[1] = String.fromCharCode(isChecked ? 1 : 0);
-  const response = await fetch("/turn-alarm-on-off/", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-binary'
-    },
-    body: data 
-  });
+  // const response = await fetch("/turn-alarm-on-off/", {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/x-binary'
+  //   },
+  //   body: data 
+  // });
+  const response = await request("/turn-alarm-on-off/", data)
   res = await response.text()
   console.log(res)
   if (res == "OK") {
@@ -132,6 +165,35 @@ let compareTime = (a, b) => {
 let isASCII = (str) => {
   return str.charCodeAt(0) >= 0 && str.charCodeAt(0) <= 127;
 }
+
+
+let checkPassword = async (password) => {
+
+  let data = new Uint8Array(password.length)
+  
+  for (let i = 0; i < password.length; i++) {
+    data[i] = password[i].charCodeAt()
+  }
+
+  const resp = await fetch('/check-password/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-binary'
+    },
+    body: data
+  })
+
+  let statusCode = resp.status
+
+  let ok = (statusCode == 200)
+  if (ok) {
+    localStorage.setItem('password', password);
+    passwordPromt.style.display = 'none'
+    refreshAlarms()
+  }
+  incorrectPwdLabel.style.display = ok ? 'none' : 'block'
+}
+
 
 let refreshAlarms = async () => {
   alarms = await getAlarmsList()
@@ -243,19 +305,16 @@ let addAlarm = async () => {
         }
       }
       console.log(data)
-      const response = await fetch("/save-alarm/", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-binary'
-        },
-        body: data 
-      });
-      if (!response.ok) {
-        alert("Server is unreachable")
-      } else {
-        await refreshAlarms()
-        popup(false, 'none')
-      }
+      // const response = await fetch("/save-alarm/", {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/x-binary'
+      //   },
+      //   body: data 
+      // });
+      const response = await request("/save-alarm/", data)
+      await refreshAlarms()
+      popup(false, 'none')
     } else {
       alert("Specify time")
     }
@@ -268,15 +327,15 @@ let removeAlarm = async (id) => {
     const data = new Uint8Array(1)
     data[0] = id
 
-    const response = await fetch("/remove-alarm/", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-binary'
-      },
-      body: data 
-    });
+    // const response = await fetch("/remove-alarm/", {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/x-binary'
+    //   },
+    //   body: data 
+    // });
 
-    if (!response.ok) alert("Server is unreachable")
+    const response = await request("/remove-alarm/", data)
 
     await refreshAlarms()
     popup(false, 'none')
@@ -284,10 +343,10 @@ let removeAlarm = async (id) => {
 }
 
 let deleteAllAlarms = async () => {
-  let res = await fetch("/remove-alarms/", {
-    method: 'POST'
-  });
-  if (!res.ok) alert("Server is unreachable")
+  // let res = await fetch("/remove-alarms/", {
+  //   method: 'POST'
+  // });
+  await request("/remove-alarms/")
 }
 
 let popup = (show, styles, edit = false, id=0) => {
@@ -356,7 +415,7 @@ document.getElementById("create-alarm").onclick = () => popup(true, 'blur(5px)')
 
 document.getElementById("save-alarm").onclick = addAlarm
 document.getElementById("cancel").onclick = () => popup(false, 'none')
-
+document.getElementById("savePassword").onclick = () => checkPassword(passwordInput.value)
 document.getElementById("delete-alarms").onclick = deleteAllAlarms;
 
 
@@ -364,6 +423,12 @@ const riseTimeSelect = document.getElementById("time-rise")
 const workAfterTimeSelect = document.getElementById("time-work-after")
 
 const alarmName = document.getElementById("alarm_name")
+
+const passwordPromt = document.getElementById("password-promt")
+
+const passwordInput = document.getElementById("passwordInput")
+
+const incorrectPwdLabel = document.getElementById("pwdError")
 
 const backBTN = document.getElementById("cancel")
 const removeBTN = document.getElementById("remove")
@@ -392,6 +457,6 @@ for (let i = 0; i < wdaysNames.length; i++) {
   document.getElementById("alarm-day-select").appendChild(label)
 }
 
-
-
-refreshAlarms()
+if (localStorage.getItem("password")) {
+  checkPassword(localStorage.getItem("password"))
+}

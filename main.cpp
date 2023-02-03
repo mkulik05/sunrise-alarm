@@ -25,8 +25,10 @@
 
 const long syncEveryMs = 1 * 3600;
 const long utcOffsetInSeconds = 10800;
-const char* ssid = "ssid";
-const char* password = "pwd";
+const char* ssid = "pwd";
+const char* passwordWIFI = "ssid";
+
+const String webPwd = "pwd";
 
 bool alarmWorking = false;
 
@@ -56,10 +58,32 @@ void handleRoot() {
   server.send(200, "text/html", htmlData);
 }
 
+bool checkPassword(String userPwd) {
+  Serial.println(userPwd.length());
+  Serial.println(userPwd);
+  if (userPwd.length() < 8) {
+    server.send(403, "text/plain", "Invalid pwd");
+    return false;
+  }
+
+  int startI = userPwd.length() - 8;
+  for (int i =  startI; i < userPwd.length(); i++) {
+    if (webPwd[i - startI] != ((char) userPwd[i])) {
+      Serial.print(userPwd[i]);
+      Serial.print((char) userPwd[i]);
+      Serial.println('-');
+      server.send(403, "text/plain", "Invalid pwd");
+      return false;
+    }
+  }
+
+  return true;
+}
 
 void removeAlarm() {
   int alarmsN = EEPROM.read(0);
   const String id = server.arg("plain");
+  if (!checkPassword(id)) return;
   int intID = (int) id[0];
   if ((intID > 0) && (alarmsN > 0)) {
     if (intID < alarmsN) {
@@ -84,9 +108,33 @@ void removeAlarm() {
   EEPROM.commit();
 }
 
+
+void checkPasswordFromUser() {
+  const String userPwd = server.arg("plain");
+  Serial.println(userPwd.length());
+  if (userPwd.length() != webPwd.length()) {
+    server.send(403, "text/plain", "Invalid pwd");
+    return;
+  }
+
+  Serial.println("-");
+  Serial.println(userPwd.length());
+  Serial.println(userPwd);
+  for (int i = 0; i < webPwd.length(); i++) {
+    if (webPwd[i] != ((char) userPwd[i])) {
+      Serial.print(userPwd[i]);
+      server.send(403, "text/plain", "Invalid pwd");
+    }
+  }
+  Serial.println("-");
+
+  server.send(200, "text/plain", "OK");
+}
+
 void saveAlarm() {
   int alarmsN = EEPROM.read(0);
   const String newAlarm = server.arg("plain");
+  if (!checkPassword(newAlarm)) return;
   const int ID = (int) newAlarm[0];
 
   if (ID > alarmsN) {
@@ -108,7 +156,7 @@ void saveAlarm() {
   Serial.print("-**-**-");
   Serial.print(newAlarm.length());
   Serial.print("-*---*-");
-  if ((newAlarm.length() <= (ALARM_SIZE + 1)) && (newAlarm.length() > 7)) {
+  if ((newAlarm.length() <= (ALARM_SIZE + 9)) && (newAlarm.length() > 15)) {
     for (int i = 0; i < ALARM_NAME_SIZE; i++) {
       EEPROM.write(ALARM_NAME_START(ID) + i, (int) newAlarm[7 + i]);
     }
@@ -126,6 +174,9 @@ int getDayOfWeek(time_t epochTime) {
 }
 
 void deleteAllAlarms() {
+
+  const String pwd = server.arg("plain");
+  if (!checkPassword(pwd)) return;
   EEPROM.write(0, 0);
   EEPROM.commit();
   server.send(200, "text/plain", "deleted");
@@ -134,9 +185,9 @@ void deleteAllAlarms() {
 void toggleAlarmState() {
   const int alarmsN = EEPROM.read(0);
   String data = server.arg("plain");
+  if (!checkPassword(data)) return;
   const int alarmI = (int) data[0];
   const int newState = (int) data[1];
-  Serial.println(alarmI);
   if (alarmI <= alarmsN) {
     EEPROM.write(ALARM_ENABLED(alarmI), newState);
     server.send(200, "text/plain", "OK");
@@ -146,16 +197,11 @@ void toggleAlarmState() {
 }
 
 void alarmsList() {
-  Serial.println("\n");
   int alarmsN = EEPROM.read(0);
-  Serial.print("-");
-  Serial.println(alarmsN);
-  Serial.print("*");
-  Serial.println(alarmsN * ALARM_SIZE);
+  const String pwd = server.arg("plain");
+  if (!checkPassword(pwd)) return;
   String res = "";
   for (int i = 1; i <= ALARM_SIZE * alarmsN; i++) {
-    Serial.print(EEPROM.read(i));
-    Serial.print("-");
     res += (char) EEPROM.read(i);
   }
   server.send(200, "text/plain", res);
@@ -165,7 +211,7 @@ void setup(void) {
   EEPROM.begin(1024);
   Serial.begin(115200);
   timeClient.begin();
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid, passwordWIFI);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -186,8 +232,8 @@ void setup(void) {
   server.on("/remove-alarms/", HTTP_POST, deleteAllAlarms);
   server.on("/turn-alarm-on-off/", HTTP_POST, toggleAlarmState);
   server.on("/remove-alarm/", HTTP_POST, removeAlarm);
-
-  server.on("/alarms-list/", HTTP_GET, alarmsList);
+  server.on("/check-password/", HTTP_POST, checkPasswordFromUser);
+  server.on("/alarms-list/", HTTP_POST, alarmsList);
 
   server.begin();
   Serial.println("HTTP server started");;
@@ -203,14 +249,6 @@ int checkTime() {
   unsigned int min = timeInfo->tm_min;
   unsigned int sec = timeInfo->tm_sec;
   unsigned int dayWeek = timeInfo->tm_wday;
-  Serial.println('-');
-  Serial.print(hour);
-  Serial.print(':');
-  Serial.print(min);
-  Serial.print(':');
-  Serial.print(sec);
-  Serial.print(" - ");
-  Serial.println(dayWeek);
   int alarmsN = EEPROM.read(0);
   for (int i = 1; i <= alarmsN; i ++) {
     if (EEPROM.read(ALARM_ENABLED(alarmsN)) == 1) {
