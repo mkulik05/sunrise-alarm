@@ -1,26 +1,20 @@
 const alarmSize = 26
 
 let getAlarmsList = async () => {
-  // let resp = await fetch("/alarms-list/")
-  // let data = new Uint8Array(await resp.arrayBuffer())
-  // let res = []
-  // if (data.length > 0) {
-  //   let i, j, n
-  //   n = 1;
-  //   for (i = 0, j = data.length; i < j; i += alarmSize) {
-  //       res.push([n, ...data.slice(i, i + alarmSize)]);
-  //       n++
-  //   }
+  let resp = await fetch("/alarms-list/")
+  if (!resp.ok) alert("Server is unreachable")
+  let data = new Uint8Array(await resp.arrayBuffer())
+  let res = []
+  if (data.length > 0) {
+    let i, j, n
+    n = 1;
+    for (i = 0, j = data.length; i < j; i += alarmSize) {
+        res.push([n, ...data.slice(i, i + alarmSize)]);
+        n++
+    }
 
-  // }
-  // return res
-  return [
-    new Uint8Array([1, 1, 127, 20, 47, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-    new Uint8Array([2, 1, 10, 2, 4, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-    new Uint8Array([3, 1, 50, 20, 47, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-    new Uint8Array([4, 1, 70, 23, 59, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-    new Uint8Array([5, 1, 71, 12, 40, 20, 20, 97, 108, 97, 114, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-  ];
+  }
+  return res
 }
 
 let updateAlarmState = (isChecked, id) => {
@@ -135,6 +129,10 @@ let compareTime = (a, b) => {
   return 0;
 }
 
+let isASCII = (str) => {
+  return str.charCodeAt(0) >= 0 && str.charCodeAt(0) <= 127;
+}
+
 let refreshAlarms = async () => {
   alarms = await getAlarmsList()
   let sorted = alarms.map((x) => x);
@@ -174,7 +172,14 @@ let refreshAlarms = async () => {
     alarm.querySelector(".delay-after").innerText =  sorted[i][6]
 
     // From 7 cause first alarm array element is alarm's ID
-    alarm.querySelector(`.name`).innerText = String.fromCharCode(...sorted[i].slice(7));
+    let res = []
+    let char = ""
+    for (let j = 7; j < sorted[i].length; j++) {
+      char = sorted[i][j]
+      if (char == 0) break
+      res.push(char)
+    }
+    alarm.querySelector(`.name`).innerText = String.fromCharCode(...res);
     console.log(...sorted[i].slice(7))
     console.log(sorted[i], sorted[i].length)
 
@@ -230,6 +235,10 @@ let addAlarm = async () => {
       let name = alarmName.value
       if (name != "") {
         for (let i = 0; i < name.length; i++) {
+          if (!isASCII(name[i])) {
+            alert("Name may include only ASCII symbols")
+            return
+          }
           data[7 + i] = name[i].charCodeAt()
         }
       }
@@ -241,22 +250,44 @@ let addAlarm = async () => {
         },
         body: data 
       });
-      res = response.text()
-      if (res != "error") {
+      if (!response.ok) {
+        alert("Server is unreachable")
+      } else {
         await refreshAlarms()
         popup(false, 'none')
       }
-
     } else {
       alert("Specify time")
     }
   }
 }
 
+
+let removeAlarm = async (id) => {
+  if (id <= alarmsN) {
+    const data = new Uint8Array(1)
+    data[0] = id
+
+    const response = await fetch("/remove-alarm/", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-binary'
+      },
+      body: data 
+    });
+
+    if (!response.ok) alert("Server is unreachable")
+
+    await refreshAlarms()
+    popup(false, 'none')
+  }
+}
+
 let deleteAllAlarms = async () => {
-await fetch("/remove-alarms/", {
+  let res = await fetch("/remove-alarms/", {
     method: 'POST'
   });
+  if (!res.ok) alert("Server is unreachable")
 }
 
 let popup = (show, styles, edit = false, id=0) => {
@@ -269,10 +300,14 @@ let popup = (show, styles, edit = false, id=0) => {
 
   document.getElementById("create-alarm").style.filter = styles;
   console.log(edit, id, alarmsN)
+  removeBTN.style.display = edit ? 'block' : 'none'
+  backBTN.style.display = edit ? 'none' : 'block'
+  clickBlocker.style.display = show ? 'block' : 'none'
   if (!edit) {
     fillFormEmpty()
     alarmID = alarmsN + 1
   } else {
+    removeBTN.onclick = () => removeAlarm(id)
     alarmID = id
     fillForm(id)
   }
@@ -329,6 +364,12 @@ const riseTimeSelect = document.getElementById("time-rise")
 const workAfterTimeSelect = document.getElementById("time-work-after")
 
 const alarmName = document.getElementById("alarm_name")
+
+const backBTN = document.getElementById("cancel")
+const removeBTN = document.getElementById("remove")
+
+const clickBlocker = document.getElementById("clickBlocker")
+clickBlocker.addEventListener('click', () => popup(false, 'none'));
 
 const selectTime = document.getElementById("select-time")
 

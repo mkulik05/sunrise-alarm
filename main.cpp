@@ -56,6 +56,34 @@ void handleRoot() {
   server.send(200, "text/html", htmlData);
 }
 
+
+void removeAlarm() {
+  int alarmsN = EEPROM.read(0);
+  const String id = server.arg("plain");
+  int intID = (int) id[0];
+  if ((intID > 0) && (alarmsN > 0)) {
+    if (intID < alarmsN) {
+      EEPROM.write(ALARM_ENABLED(intID), EEPROM.read(ALARM_ENABLED(alarmsN)));
+      EEPROM.write(ALARM_DAYS(intID), EEPROM.read(ALARM_DAYS(alarmsN)));
+      EEPROM.write(ALARM_HOUR(intID), EEPROM.read(ALARM_HOUR(alarmsN)));
+      EEPROM.write(ALARM_MIN(intID), EEPROM.read(ALARM_MIN(alarmsN)));
+      EEPROM.write(ALARM_RISE(intID), EEPROM.read(ALARM_RISE(alarmsN)));
+      EEPROM.write(ALARM_WORK_AFTER(intID), EEPROM.read(ALARM_WORK_AFTER(alarmsN)));
+    }
+    if ((intID < alarmsN) || (intID == alarmsN)) {
+      for (int i = 0; i < ALARM_NAME_SIZE; i++) {
+        EEPROM.write(ALARM_NAME_START(intID) + i, 0);
+      }
+    }
+    EEPROM.write(0, alarmsN - 1);
+  } else {
+    server.send(400, "text/plain", "Invalid ID");
+    return;
+  }
+  server.send(200, "text/plain", "removed");
+  EEPROM.commit();
+}
+
 void saveAlarm() {
   int alarmsN = EEPROM.read(0);
   const String newAlarm = server.arg("plain");
@@ -157,6 +185,7 @@ void setup(void) {
   server.on("/save-alarm/", HTTP_POST, saveAlarm);
   server.on("/remove-alarms/", HTTP_POST, deleteAllAlarms);
   server.on("/turn-alarm-on-off/", HTTP_POST, toggleAlarmState);
+  server.on("/remove-alarm/", HTTP_POST, removeAlarm);
 
   server.on("/alarms-list/", HTTP_GET, alarmsList);
 
