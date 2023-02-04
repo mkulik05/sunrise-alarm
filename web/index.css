@@ -6,6 +6,7 @@ html, body, #clickBlocker {
   left:0;
   top: 0;
   margin: 0;
+  overflow-y: scroll
 }
 
 button {

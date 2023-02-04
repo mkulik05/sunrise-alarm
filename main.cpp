@@ -232,7 +232,7 @@ int checkTime() {
   uint min = timeInfo->tm_min;
   uint dayWeek = timeInfo->tm_wday;
   int alarmsN = EEPROM.read(0);
-  for (uint i = 1; i <= alarmsN; i ++) {
+  for (int i = 1; i <= alarmsN; i ++) {
     if (EEPROM.read(ALARM_ENABLED(i)) == 1) {
       int dayOfweek = (dayWeek+ 6) % 7;
       if (EEPROM.read(ALARM_DAYS(i)) & (uint8_t) (1 << dayOfweek)) {
@@ -255,6 +255,7 @@ void loop() {
         previousMillis = currentMillis;
 
         analogWrite(ALARM_PIN, 0);
+        brightness = 0;
         alarmWorking = false;
       } 
     } else {
