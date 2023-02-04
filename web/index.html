@@ -14,25 +14,24 @@
       <div id="pwdError">Incorrect password</div>
       <button id="savePassword">Login</button>
     </div>
-    <div id="alarms-list" class="wrapper">
 
-    </div>
+    <div id="alarms-list" class="wrapper"></div>
+    
     <div class="wrapper">
       <button id="create-alarm">
         +
       </button>
     </div>
+    
     <div class="wrapper">
       <div id="alarmAdder" class="wrapper" hidden>
-        <div id="nameInput" class="card-element">
-          <input placeholder="Alarm name" onClick="this.select();" type="text" id="alarm_name" name="Name" maxlength="20">
-        </div>
+        <input placeholder="Alarm name" onClick="this.select();" type="text" id="alarm_name" class="card-element" name="Name" maxlength="20">
         <input type="time" class="card-element" id="select-time" required>
         <div class="wrapper space-between card-element" id="alarm-delays-select">
           <input type="number" onClick="this.select();" placeholder="Rise time" min="1" max="240" id="time-rise">
-          <input type="number" onClick="this.select();" placeholder="Stay after rise" min="1" max="240" id="time-work-after">
+          <input type="number" onClick="this.select();" placeholder="After rise" min="1" max="240" id="time-work-after">
         </div>
-        <div class="wrapper card-element" id="alarm-day-select">
+        <div class="wrapper card-element space-between" id="alarm-day-select">
         </div>
         <div class="wrapper card-element" id="adderBtns">
           <button id="cancel">
@@ -47,9 +46,11 @@
         </div>
       </div> 
     </div>
+    
     <button id="delete-alarms" hidden>
       Delete all alarms
-    </button>    
+    </button>
+
   </body>
   <script src="index.js"></script>
 </html>

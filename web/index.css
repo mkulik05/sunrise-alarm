@@ -1,8 +1,56 @@
-#alarms-list {
-  flex-direction: column;
+/* Common styles */
+html, body, #clickBlocker {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left:0;
+  top: 0;
 }
 
+button {
+  background-color: white;
+  border: 0px;
+  user-select: none; 
+}
+
+button:hover {
+  color: rgb(99, 96, 246);
+}
+
+input {
+  font-family: "Gill Sans", sans-serif;
+  font-size: 20px;
+  height: 40px;
+  border: 0px;
+  border-bottom: 1px solid rgb(143, 142, 142);
+}
+
+
+input:focus  {
+  outline: none;
+  border-bottom: 1px solid rgb(8, 0, 245)
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;    
+  align-items: center;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+#clickBlocker {
+  opacity: 0;
+  display: none;
+  z-index: 50;
+}
+
+
+/* Password promt styles */
 #password-promt {
+  display: none;
   position: fixed;
   width: 100%;
   height: 100%;
@@ -29,7 +77,6 @@
   font-size: 16px;
 }
 
-
 #pwdError{
   color: red;
   margin-top: 5px;
@@ -37,111 +84,12 @@
   font-size: 14px;
 }
 
-.alarm-block {
-  width: 500px;
-  height: 100px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  user-select: none; 
-}
-
-.wrapper {
-  display: flex;
-  justify-content: center;    
-  align-items: center;
-}
-
-.alarm-time {
-  font-size: 40px;
-  font-family: "Gill Sans", sans-serif;
-  width: 30%;
-  text-align: left;
-}
-
-.time-name-days {
-  width: 85%;
-  -webkit-tap-highlight-color:transparent;
-}
-
-#remove {
-  display: none;
-}
-
-.time-name {
-  display: flex;
-  align-items: center;
-}
-
-.days {
-  color: grey; 
-  text-align: left;
-  margin-left: 5px;
-}
-
-input {
-  font-family: "Gill Sans", sans-serif;
-  font-size: 20px;
-  height: 40px;
-  border: 0px;
-  border-bottom: 1px solid rgb(143, 142, 142);
-}
-
-
-input:focus  {
-  outline: none;
-  font-family: "Gill Sans", sans-serif;
-  border-bottom: 1px solid rgb(8, 0, 245)
-}
-
-#alarmAdder {
-  box-shadow: 5px 4px 2px rgb(178, 177, 177);
-  border: 1px solid black;
-  width: 500px;
-  height: 400px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 100;
-  display:none;
-  background-color: white;
+#alarms-list {
   flex-direction: column;
-  justify-content: space-around;
 }
 
 
-#adderBtns {
-  justify-content: space-around;
-  width: 100%
-}
-#alarm-day-select {
-  display: flex;
-  justify-content: space-between;
-  user-select: none; 
-}
-#alarm-day-select label {
-  color: rgb(133, 133, 133);
-  font-family: "Gill Sans", sans-serif;
-}
-#alarm-day-select input {
-  display: none;
-}
-#alarm-day-select input[type=checkbox]:checked + label {
-  color: rgb(52, 75, 255);
-}
-
-button {
-  background-color: white;
-  border: 0px;
-  user-select: none; 
-}
-
-button:hover {
-  color: rgb(99, 96, 246);
-  border: 0px;
-}
-
+/* Create alarm btn */
 #create-alarm {
   width: 50px;
   height: 50px;
@@ -154,35 +102,56 @@ button:hover {
 }
 
 #create-alarm:hover {
-background-color: rgb(228, 228, 255);
+  background-color: rgb(228, 228, 255);
 }
 
-#nameInput input {
-  width: 100%;
-  font-size: 24px;
+
+/* Alarm block styles */
+.alarm-block {
+  width: 500px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  user-select: none; 
 }
 
-html, body, #clickBlocker {
-  width: 100%;
+.delays-time-name-days {
+  width: 85%;
+  -webkit-tap-highlight-color:transparent;
+  cursor: pointer;
+}
+
+
+.delays-time {
+  justify-content: left;
+}
+
+.delays {
+  flex-direction: column;
+  font-size: 10px;
   height: 100%;
-  position: fixed;
-  left:0;
-  top: 0;
+  margin-right: 3px;
+  text-align: right;
 }
 
-#clickBlocker {
-  opacity: 0;
-  display: none;
-  z-index: 50;
-}
-
-#adderBtns button {
+.time {
+  font-size: 40px;
   font-family: "Gill Sans", sans-serif;
-  font-size: 15px;
+  width: 30%;
+  text-align: left;
 }
 
-#alarm-delays-select input {
-  width: 120px;
+.name {
+  width: 85%;
+  font-size: 20px;
+  text-align: center;
+  color: grey;
+}
+
+.days {
+  color: grey; 
+  text-align: left;
+  margin-left: 5px;
 }
 
 .toggle-switch {
@@ -227,87 +196,96 @@ html, body, #clickBlocker {
   transform: translateX(26px);
 }
 
-.space-between {
-  justify-content: space-between;
-}
-
+/* Alarm adder styles */
 .card-element {
   width: 70%
 }
 
-.delays {
-  display: flex;;
+#alarmAdder {
+  box-shadow: 5px 4px 2px rgb(178, 177, 177);
+  border: 1px solid black;
+  width: 500px;
+  height: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display:none;
+  background-color: white;
   flex-direction: column;
-  justify-content: space-between;
-  font-size: 10px;
-  height: 100%;
-  margin-right: 3px;
-  text-align: right;
+  justify-content: space-around;
 }
 
-.time-name-days {
-  cursor: pointer;
+#alarm_name {
+  font-size: 24px;
 }
 
-.name {
-  width: 85%;
-  font-size: 20px;
-  text-align: center;
-  color: grey;
+#alarm-day-select {
+  display: flex;
+  user-select: none; 
 }
-.delays-time {
-  justify-content: left;
+
+#alarm-day-select label {
+  color: rgb(133, 133, 133);
+  font-family: "Gill Sans", sans-serif;
+}
+
+#alarm-day-select input {
+  display: none;
+  width: 120px;
+}
+
+#alarm-delays-select input {
+  width: 120px; 
+}
+
+#alarm-day-select input[type=checkbox]:checked + label {
+  color: rgb(52, 75, 255);
+}
+
+#adderBtns {
+  justify-content: space-around;
+  width: 100%
+}
+
+#adderBtns button {
+  font-family: "Gill Sans", sans-serif;
+  font-size: 15px;
+}
+
+#remove {
+  display: none;
 }
 
 @media (max-width: 1000px) {
-  .alarm-block {
-    width: 90%;
-    height: 120px;
+  input {
+    font-size: 20px;
+    height: 30px;
   }
-  .card-element {
-    width: 85%;
-  }
-  #alarmAdder {
-    height: 500px;
-    width:  90%;
+  input[type="text"] {
+    font-size: 25px;
   }
   #create-alarm {
     font-size: 30px;
     height: 65px;
     width: 65px;
   }
+  .alarm-block {
+    width: 90%;
+    height: 120px;
+  }
+
   .alarm-time {
     font-size: 40px;
   }
-
   .name {
     font-size: 15px;
   }
-
-  input {
-    font-size: 20px;
-    height: 30px;
-  }
-  #adderBtns button {
-    font-size: 20px;
-  }
-  input[type="text"] {
-    font-size: 25px;
-  }
-
-  #alarm-day-select label {
-    font-size: 20px;  
-  }
-
   .toggle-switch {
     width: 55px;
     height: 28px;
-  }  
-
-  #alarm-name {
-    font-size: 25px;
-  }
-  
+  } 
   .toggle-slider {
     transition: .4s;
     border-radius: 28px;
@@ -328,5 +306,24 @@ html, body, #clickBlocker {
   .toggle-input:checked + .toggle-slider:before {
     transform: translateX(28px);
   }
-}
 
+  .card-element {
+    width: 85%;
+  }
+  #alarmAdder {
+    height: 500px;
+    width:  90%;
+  }
+
+  #adderBtns button {
+    font-size: 20px;
+  }
+
+  #alarm-day-select label {
+    font-size: 20px;  
+  }
+ 
+  #alarm-name {
+    font-size: 25px;
+  }
+}

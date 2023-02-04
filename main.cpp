@@ -25,8 +25,8 @@
 
 const long syncEveryMs = 1 * 3600;
 const long utcOffsetInSeconds = 10800;
-const char* ssid = "pwd";
-const char* passwordWIFI = "ssid";
+const char* ssid = "ssid";
+const char* passwordWIFI = "pwd";
 
 const String webPwd = "pwd";
 
@@ -37,11 +37,12 @@ unsigned long previousMillis2 = 0;
 unsigned long lastSyncMillis = 0; 
 unsigned int workingAlarmInd;
 const unsigned long interval = 5000;
+const int base2 = 2;
 
-int timeRise = 15;
-int timeWorkAfter = 40 * 60000;
-int unsigned long pwmInterval = timeRise * 60000 / 255;
-int brightness = 0;
+uint timeRise = 15;
+uint timeWorkAfter = 40 * 60000;
+uint pwmInterval = timeRise * 60000 / 255;
+uint brightness = 0;
 
 ESP8266WebServer server(80);
 WiFiUDP ntpUDP;
@@ -54,24 +55,18 @@ String htmlData = "";
 
 
 void handleRoot() {
-  Serial.println("Root html request");
   server.send(200, "text/html", htmlData);
 }
 
 bool checkPassword(String userPwd) {
-  Serial.println(userPwd.length());
-  Serial.println(userPwd);
   if (userPwd.length() < 8) {
     server.send(403, "text/plain", "Invalid pwd");
     return false;
   }
 
   int startI = userPwd.length() - 8;
-  for (int i =  startI; i < userPwd.length(); i++) {
+  for (uint i =  startI; i < userPwd.length(); i++) {
     if (webPwd[i - startI] != ((char) userPwd[i])) {
-      Serial.print(userPwd[i]);
-      Serial.print((char) userPwd[i]);
-      Serial.println('-');
       server.send(403, "text/plain", "Invalid pwd");
       return false;
     }
@@ -111,22 +106,17 @@ void removeAlarm() {
 
 void checkPasswordFromUser() {
   const String userPwd = server.arg("plain");
-  Serial.println(userPwd.length());
   if (userPwd.length() != webPwd.length()) {
     server.send(403, "text/plain", "Invalid pwd");
     return;
   }
 
-  Serial.println("-");
-  Serial.println(userPwd.length());
-  Serial.println(userPwd);
-  for (int i = 0; i < webPwd.length(); i++) {
+  for (uint i = 0; i < webPwd.length(); i++) {
     if (webPwd[i] != ((char) userPwd[i])) {
       Serial.print(userPwd[i]);
       server.send(403, "text/plain", "Invalid pwd");
     }
   }
-  Serial.println("-");
 
   server.send(200, "text/plain", "OK");
 }
@@ -153,9 +143,6 @@ void saveAlarm() {
   EEPROM.write(ALARM_RISE(ID), (int) newAlarm[5]);
   EEPROM.write(ALARM_WORK_AFTER(ID), (int) newAlarm[6]);
 
-  Serial.print("-**-**-");
-  Serial.print(newAlarm.length());
-  Serial.print("-*---*-");
   if ((newAlarm.length() <= (ALARM_SIZE + 9)) && (newAlarm.length() > 15)) {
     for (int i = 0; i < ALARM_NAME_SIZE; i++) {
       EEPROM.write(ALARM_NAME_START(ID) + i, (int) newAlarm[7 + i]);
@@ -174,7 +161,6 @@ int getDayOfWeek(time_t epochTime) {
 }
 
 void deleteAllAlarms() {
-
   const String pwd = server.arg("plain");
   if (!checkPassword(pwd)) return;
   EEPROM.write(0, 0);
@@ -218,7 +204,6 @@ void setup(void) {
   }
   Serial.println("");
 
-  Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
@@ -241,14 +226,13 @@ void setup(void) {
   lastSyncMillis = millis();
 
 }
-const int base2 = 2;
+
 int checkTime() {
   time_t secondsGone = timeClient.getEpochTime() + (millis() - lastSyncMillis) / 1000;
   struct tm *timeInfo = gmtime(&secondsGone);
-  unsigned int hour = timeInfo->tm_hour;
-  unsigned int min = timeInfo->tm_min;
-  unsigned int sec = timeInfo->tm_sec;
-  unsigned int dayWeek = timeInfo->tm_wday;
+  uint hour = timeInfo->tm_hour;
+  uint min = timeInfo->tm_min;
+  uint dayWeek = timeInfo->tm_wday;
   int alarmsN = EEPROM.read(0);
   for (int i = 1; i <= alarmsN; i ++) {
     if (EEPROM.read(ALARM_ENABLED(alarmsN)) == 1) {
@@ -273,7 +257,6 @@ void loop() {
         previousMillis = currentMillis;
 
         analogWrite(ALARM_PIN, 0);
-        Serial.println("turn off");
         alarmWorking = false;
       } 
     } else {
@@ -281,7 +264,6 @@ void loop() {
         previousMillis = currentMillis;
         brightness += 1;
         analogWrite(ALARM_PIN, brightness);
-        Serial.println(brightness);
       }    
     }
   } else {
