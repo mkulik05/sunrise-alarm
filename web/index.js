@@ -183,7 +183,6 @@ const getAlarmHTML = (id) => {
 
 
 // Functions which communicate with server
-
 const getAlarmsList = async () => {
   let resp = await request("/alarms-list/")
   let res = []
@@ -216,7 +215,7 @@ const changeToogleStateServer = async (id) => {
   const isChecked = document.querySelector(`.toggle-input.alarm-id-${id}`).checked
   const data = new Uint8Array(2);
   data[0] = id
-  data[1] = String.fromCharCode(isChecked ? 1 : 0);
+  data[1] = isChecked ? 1 : 0
   const response = await request("/turn-alarm-on-off/", data)
   const res = await response.text()
   if (res == "OK") {
@@ -298,7 +297,7 @@ const refreshAlarms = async () => {
 }
 
 
-const addAlarm = async () => {
+const saveAlarm = async () => {
   let res = 0;
   
   for (let i = 0; i < days.length; i++) {
@@ -387,7 +386,7 @@ const createAlarm = document.getElementById("create-alarm")
 
 // Assigning events handlers 
 document.getElementById("create-alarm").onclick = () => popup(true, 'blur(5px)')
-document.getElementById("save-alarm").onclick = addAlarm
+document.getElementById("save-alarm").onclick = saveAlarm
 document.getElementById("savePassword").onclick = () => checkPassword(passwordInput.value)
 document.getElementById("delete-alarms").onclick = () => request("/remove-alarms/");
 clickBlocker.addEventListener('click', () => popup(false, 'none'));

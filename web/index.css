@@ -5,6 +5,7 @@ html, body, #clickBlocker {
   position: fixed;
   left:0;
   top: 0;
+  margin: 0;
 }
 
 button {
@@ -255,6 +256,7 @@ input:focus  {
 }
 
 #remove {
+  color: red;
   display: none;
 }
 
@@ -304,14 +306,14 @@ input:focus  {
   }
   
   .toggle-input:checked + .toggle-slider:before {
-    transform: translateX(28px);
+    transform: translateX(26px);
   }
 
   .card-element {
     width: 85%;
   }
   #alarmAdder {
-    height: 500px;
+    height: 400px;
     width:  90%;
   }
 

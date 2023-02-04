@@ -7,8 +7,6 @@
 #include "NTPClient.h"
 #include "WiFiUdp.h"
 #include <EEPROM.h>
-#include <string.h>
-#include <cmath>
 
 #define ALARM_NAME_SIZE 20
 #define ALARM_SIZE (6 + ALARM_NAME_SIZE)
@@ -21,7 +19,7 @@
 #define ALARM_NAME_START(i) (i - 1) * ALARM_SIZE + 7
 
 
-#define ALARM_PIN 0
+#define ALARM_PIN 4
 
 const long syncEveryMs = 1 * 3600;
 const long utcOffsetInSeconds = 10800;
@@ -36,8 +34,7 @@ unsigned long previousMillis = 0;
 unsigned long previousMillis2 = 0; 
 unsigned long lastSyncMillis = 0; 
 unsigned int workingAlarmInd;
-const unsigned long interval = 5000;
-const int base2 = 2;
+const unsigned long interval = 3000;
 
 uint timeRise = 15;
 uint timeWorkAfter = 40 * 60000;
@@ -176,6 +173,7 @@ void toggleAlarmState() {
   const int newState = (int) data[1];
   if (alarmI <= alarmsN) {
     EEPROM.write(ALARM_ENABLED(alarmI), newState);
+    EEPROM.commit();
     server.send(200, "text/plain", "OK");
   } else {
     server.send(400, "text/plain", "Invalid index");
@@ -234,12 +232,12 @@ int checkTime() {
   uint min = timeInfo->tm_min;
   uint dayWeek = timeInfo->tm_wday;
   int alarmsN = EEPROM.read(0);
-  for (int i = 1; i <= alarmsN; i ++) {
-    if (EEPROM.read(ALARM_ENABLED(alarmsN)) == 1) {
+  for (uint i = 1; i <= alarmsN; i ++) {
+    if (EEPROM.read(ALARM_ENABLED(i)) == 1) {
       int dayOfweek = (dayWeek+ 6) % 7;
-      if (EEPROM.read(ALARM_DAYS(alarmsN)) & (uint8_t) pow(base2, dayOfweek)) {
-        if (EEPROM.read(ALARM_HOUR(alarmsN)) == hour) {
-          if (EEPROM.read(ALARM_MIN(alarmsN)) == min) {
+      if (EEPROM.read(ALARM_DAYS(i)) & (uint8_t) (1 << dayOfweek)) {
+        if (EEPROM.read(ALARM_HOUR(i)) == hour) {
+          if (EEPROM.read(ALARM_MIN(i)) == min) {
             return i;
           }
         }
