@@ -2,7 +2,7 @@
 ## Description
 It's a smart alarm working on ESP. A LED tape is connected to the ESP through a MOSFET. Because of this, there is an artificial sunrise effect (thanks to PWM).
 
-![web UI](https://i.imgur.com/SxQ2D1F.png)! [web UI2](https://i.imgur.com/YA1SfWu.png)
+![web UI](https://i.imgur.com/YA1SfWu.png)
 
 ## Usage
 
